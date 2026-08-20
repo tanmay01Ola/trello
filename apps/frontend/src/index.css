@@ -1,18 +1,6 @@
-.parent {
-    display: flex;
-    margin : 10;
-
-}
-.child {
-    flex : 1;
-}
-
-.issue {
-    padding-top: 10;
-    color: gray;
-      max-width: 100;
-  
-}
-.heading {
-    font-size: 30;
+.SignupInput {
+    width: 300;
+     height: 40; 
+    border-radius: 10; 
+      margin : 10;
 }
