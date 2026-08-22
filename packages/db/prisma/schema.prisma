@@ -29,7 +29,7 @@ enum Role {
 
 model Org {
   id String @id @default(uuid())
-  name String
+  name String @unique
   members Members[]
   Boards   Boards[]
 }
@@ -43,7 +43,7 @@ model Members {
 
 model Boards {
   id String @id @default(uuid())
-  BoardName String
+  BoardName String @unique
   orgId      String
   org        Org @relation(fields: [orgId] , references: [id])
   issue   Issue[]
@@ -68,7 +68,7 @@ enum Status {
 
 model Section {
   id String @id @default(uuid())
-  title String
+  title String @unique
   boardId String
   board Boards @relation(fields: [boardId] , references: [id])
 }

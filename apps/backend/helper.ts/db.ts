@@ -11,3 +11,18 @@ export const signinBody= z.object({
         
     )
 })
+
+export const OrgBody = z.object({
+    name : z.string()
+})
+
+
+export const boardBody = z.object({
+    name : z.string()
+})
+
+export const issueBody = z.object({
+    title : z.string(),
+    description : z.string().optional(),
+    status : z.enum(["done" , "in_progress" ,"upcoming"])
+})

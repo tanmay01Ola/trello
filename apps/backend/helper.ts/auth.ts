@@ -1,3 +1,4 @@
+import { prisma } from "db/client";
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.DATABASE_URL;
@@ -33,4 +34,15 @@ export function AuthMiddleware(req : Auth , res : Response , next : NextFunction
     const userId = payload.id;
     req.id = userId;
     next()
+}
+
+
+export async function hasRole(userId : string){
+       const user = await prisma.user.findUnique({
+           where : {
+            id : userId
+           }
+       })
+
+       return user?.role
 }
