@@ -20,6 +20,11 @@ model User {
   members Members[]
   issueMapping IssueMapping[]
   comment Comments[]
+  role Role @default(user)
+}
+enum Role {
+  user
+  admin
 }
 
 model Org {
