@@ -1,8 +1,7 @@
 import { Router } from "express";
-import { AuthMiddleware, hasRole, type Auth } from "../helper.ts/auth";
+import { AuthMiddleware , type Auth , hasRole } from "../helper.tsx/auth";
 import { prisma } from "db/client";
-import { issueBody } from "../helper.ts/db";
-import { is } from "zod/locales";
+import { issueBody, moveIssue } from "../helper.tsx/db";
 const issueRouter = Router();
 
 
@@ -34,11 +33,22 @@ issueRouter.post("/issue/:boardId" ,AuthMiddleware, async (req : Auth ,res)=>{
         boardId : boardId 
     }
   })
-
   res.json({
     message : "ISSUE_CREATED",
     id : issue.id
   })
+})
+issueRouter.get("/:orgId/:boardId" ,async (req , res) =>{
+    const orgId = req.params.orgId;
+    const boardId = req.params.boardId;
+    const issues = await prisma.issue.findMany({
+        where : {
+            boardId : boardId
+        }
+    })
+    res.json({
+        issues : issues
+    })
 })
 
 issueRouter.patch("/:issueId", AuthMiddleware , async(req  : Auth,res)=>{
@@ -67,4 +77,37 @@ issueRouter.patch("/:issueId", AuthMiddleware , async(req  : Auth,res)=>{
     res.json({
         message : "ISSUE_DELETED"
     })
+})
+
+issueRouter.move("/move/:issueId" ,AuthMiddleware,async (req : Auth,res)=>{
+      const userId = req.id;
+      if(!userId){
+        return(res.status(400).json({
+            message :"BAD_REQUEST"
+        }))
+      }
+      const issueId = req.params.id;
+      if(!(typeof issueId === "string")){
+        return(res.status(400).json({
+            message : "BAD_REQUEST"
+        }))
+      }
+      const parsedBody = moveIssue.safeParse(req.body);
+      if(!parsedBody.success){
+        return(res.status(400).json({
+            message : "BAD_REQUEST"
+        }))
+      }
+      const {title} = parsedBody.data;
+      const move = await prisma.issue.update({
+         where : {
+            id : issueId
+         } , data : {
+             title : title
+         }
+      })
+
+      res.json({
+        message : "Issue updated"
+      })
 })

@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { AuthMiddleware, hasRole, type Auth } from "../helper.ts/auth";
+import { type Auth , AuthMiddleware , hasRole } from "../helper.tsx/auth";
 import { prisma } from "db/client";
-import { boardBody } from "../helper.ts/db";
+import { boardBody } from "../helper.tsx/db";
 import { use } from "react";
 const boardRouter = Router();
 
@@ -34,10 +34,9 @@ boardRouter.post("/board/:orgId" ,AuthMiddleware, async (req : Auth ,res)=>{
    const board = await prisma.boards.create({
     data : {
         BoardName : name,
-        orgId : orgId
+        orgId : orgId,
     }
    })
-
    res.json({
     message : "BOARD_CREATED",
     id : board.id
@@ -70,4 +69,28 @@ boardRouter.delete("/delete/:boardId" , AuthMiddleware,async(req: Auth ,res)=>{
        res.json({
         message :"BOARD_DELETED"
        })
+})
+
+boardRouter.get("/:orgId" ,AuthMiddleware,async (req  : Auth,res)=>{
+      const userId = req.id;
+      if(!userId){
+        return(res.status(400).json({
+            message : "BAD_REQUEST"
+        }))
+      }
+      const orgId = req.params.id;
+      if(!(typeof orgId === "string")){
+           return(res.status(400).json({
+            message : "BAD_REQUEST"
+           }))
+      }
+      const getBoards = await prisma.boards.findMany({
+        where : {
+            orgId : orgId
+        }
+      })
+
+      res.json({
+        boards : getBoards
+      })
 })

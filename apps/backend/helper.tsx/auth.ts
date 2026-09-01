@@ -1,7 +1,7 @@
 import { prisma } from "db/client";
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-const JWT_SECRET = process.env.DATABASE_URL;
+const JWT_SECRET = process.env.JWT_SECRET;
 interface payload {
     id : string
 }
@@ -29,18 +29,18 @@ export function AuthMiddleware(req : Auth , res : Response , next : NextFunction
             message : "TOKEN_MISSING"
         }))
     }
-    const payload = jwt.verify(token ,( JWT_SECRET)!) as payload;
-
+    const payload = jwt.verify(token ,( JWT_SECRET!)) as payload;
     const userId = payload.id;
     req.id = userId;
     next()
 }
 
 
-export async function hasRole(userId : string){
-       const user = await prisma.user.findUnique({
+export async function hasRole(userId : string , orgId : string){
+       const user = await prisma.members.findUnique({
            where : {
-            id : userId
+            id : userId,
+            orgId : orgId
            }
        })
 

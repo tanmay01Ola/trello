@@ -26,3 +26,20 @@ export const issueBody = z.object({
     description : z.string().optional(),
     status : z.enum(["done" , "in_progress" ,"upcoming"])
 })
+
+
+export const inviteBody = z.object({
+    inviteId : z.string()
+})
+
+export const sectionBody = z.object({
+    name : z.string()
+})
+
+export const moveIssue = z.object({
+    title : z.string()
+})
+
+export const commentBody = z.object({
+    comment : z.string()
+})

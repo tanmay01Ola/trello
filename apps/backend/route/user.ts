@@ -1,12 +1,13 @@
 import { Router } from "express";
-import { signupBody , signinBody } from "../helper.ts/db";
+import { signupBody , signinBody, inviteBody } from "../helper.tsx/db";
 import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET;
 export const userRouter = Router();
 import bcrypt from "bcrypt";
 import {prisma} from "db/client";
-import { AuthMiddleware, type Auth } from "../helper.ts/auth";
+import { AuthMiddleware , hasRole, type Auth } from "../helper.tsx/auth";
 userRouter.post("/signup" , async (req,res)=>{
+    try {
     const body = signupBody.safeParse(req.body);
     if(!body.success){
         return(res.status(400).json({
@@ -19,16 +20,29 @@ userRouter.post("/signup" , async (req,res)=>{
        data : {
         username : username,
         email : email, 
-        password : password,
-        role :"user"
+        password : hashdPassword
        }
     })
     res.json({
         message : "User signed up"
     })
+}   catch(err : any){
+    if(err.code === "P2002"){
+        return(res.status(409).json({
+            message : "UNIQUE_CONSTRAINT_VOILATED"
+        }))
+
+    } 
+
+    return(res.status(500).json({
+        message : "INTERNAL_SERVER_ERROR"
+    }))
+
+}
 })
 
 userRouter.post("/signin" , async (req, res)=>{
+    try {
     const body = signinBody.safeParse(req.body);
     if(!body.success){
         return(res.status(400).json({
@@ -56,26 +70,85 @@ userRouter.post("/signin" , async (req, res)=>{
         message : "USER_LOGGED_IN",
         token : token
     })
+} catch(err){
+    return(res.status(500).json({
+        message : "INTERNAL_SERVER_ERROR"
+    }))
+}
 })
 
 
-userRouter.patch("/role" ,AuthMiddleware, async(req : Auth , res)=>{
-     const userId = req.id;
-     if(!userId){
+userRouter.post("/invite/:orgId", AuthMiddleware ,async (req : Auth ,res)=>{
+    const userId = req.id;
+    if(!userId){
         return(res.status(403).json({
             message : "BAD_REQUEST"
         }))
+    }
+     const orgId = req.params.orgId ;
+     if(!(typeof orgId === "string")){
+        return(res.status(400).json({
+            message : "BAD_REQUEST"
+        }))
      }
-
-     const updateRole = await prisma.user.update({
+    if(await hasRole(userId , orgId) === "user"){
+         return(res.status(409).json({
+            message : "UNAUTHORIZED"
+         }))
+    }
+    const parsedBody = inviteBody.safeParse(req.body);
+    if(!parsedBody.success){
+        return(res.status(400).json({
+            message : "BAD_INPUTS"
+        }))
+    }
+    const {inviteId} = parsedBody.data;
+    const findUser = await prisma.user.findFirst({
         where : {
-            id : userId
-        } ,
-        data : {
-            role : "admin"
+            id : inviteId
         }
-     })
-     res.json({
-        message :"ROLE_UPDATED"
-     })
+    })
+    if(!findUser){
+        return(res.status(404).json({
+            message : "USER_NOT_SIGNED_UP"
+        }))
+    }
+    const invite = await prisma.invites.create({
+        data : {
+            orgId : orgId,
+            userId : inviteId
+        }
+    }) 
+
+    res.json({
+        message : "INVITE_SENT"
+    })
+})
+
+
+userRouter.post("/accept/:orgId", AuthMiddleware ,async (req : Auth ,res)=>{
+    const userId = req.id;
+    if(!userId){
+        return(res.status(403).json({
+            message : "BAD_REQUEST"
+        }))
+    }
+   const orgId = req.params.orgId;
+   if(!(typeof orgId === "string")){
+    return(res.status(400).json({
+        message : "BAD_REQUEST"
+    }))
+   }
+    const accept =await prisma.invites.update({
+        where : {
+            id : userId,
+           orgId : orgId
+        } , data : {
+            accepted :true
+        }
+    })
+
+    res.json({
+        message : "INVITE_ACCEPTED"
+    })
 })

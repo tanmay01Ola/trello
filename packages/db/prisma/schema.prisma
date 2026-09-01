@@ -16,11 +16,11 @@ model User {
   id     String @id @default(uuid())
   username String @unique
   password String
-  email  String 
+  email  String @unique
   members Members[]
   issueMapping IssueMapping[]
   comment Comments[]
-  role Role @default(user)
+  invites Invites[]
 }
 enum Role {
   user
@@ -32,6 +32,7 @@ model Org {
   name String @unique
   members Members[]
   Boards   Boards[]
+  invite Invites[]
 }
 model Members {
   id String @id @default(uuid())
@@ -39,6 +40,20 @@ model Members {
   user    User @relation(fields: [userId] , references: [id])
   orgId    String
   org     Org @relation(fields: [orgId] , references: [id])
+  role Role @default(user)
+
+  @@unique([userId , orgId])
+}
+model Invites {
+  id String @id @default(uuid())
+  userId String
+  user User @relation(fields: [userId] , references: [id])
+  orgId String
+  org Org @relation(fields: [orgId] , references: [id])
+  accepted Boolean @default(false)
+
+
+  @@unique([userId , orgId])
 }
 
 model Boards {
