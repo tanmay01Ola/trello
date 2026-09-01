@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { signupBody , signinBody, inviteBody } from "../helper.tsx/db";
+import { signupBody , signinBody, inviteBody, removeBody } from "../helper.tsx/db";
 import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET;
 export const userRouter = Router();
@@ -152,3 +152,76 @@ userRouter.post("/accept/:orgId", AuthMiddleware ,async (req : Auth ,res)=>{
         message : "INVITE_ACCEPTED"
     })
 })
+
+
+userRouter.post("/remove/:orgId" , AuthMiddleware ,async (req : Auth , res)=>{
+    const userId = req.id;
+    if(!userId){
+        return(res.status(400).json({
+            message : "BAD_REQUEST"
+        }))
+    }
+     const orgId = req.params.orgId;
+     if(!(typeof orgId === "string")){
+        return(res.status(400).json({
+            message : "BAD_URL"
+        }))
+     }
+    const parsedBody = removeBody.safeParse(req.body);
+    if(!parsedBody.success){
+        return(res.status(403).json({
+            message : "BAD_INPUTS"
+        }))
+    }
+    const {user} = parsedBody.data;
+     if(!(await hasRole(userId ,orgId ) === "admin")){
+        return(res.status(403).json({
+            message :  "ONLY_ADMIN_CAN_REMOVE_USER_FROM_ORG"
+        }))
+     }
+     const member = await prisma.members.findFirst({
+        where : {
+            userId : user,
+            orgId : orgId
+        }
+     })
+
+     const removeUser = await prisma.members.delete({
+        where : {
+            id : member?.id
+        }
+     })
+
+     res.json({
+        message : "USER_REMOVED_FROM_ORG"
+     })
+})
+
+userRouter.post("/leave/:orgId" , AuthMiddleware , async(req : Auth ,res)=>{
+      const orgId = req.params.orgId;
+      if(!(typeof orgId === "string")){
+        return(res.status(400).json({
+            message : "BAD_URL"
+        }))
+      }
+      const userId = req.id;
+      if(!userId){
+        return(res.status(400).json({
+            message : "BAD_REQUEST"
+        }))
+      }
+      const USER = await prisma.members.findUnique({
+        where : {
+            id : userId
+        }
+      })
+      const leave = await prisma.members.delete({
+        where : {
+            id : USER?.id
+        }
+      })
+      res.json({
+        message : "ORG_LEFT"
+      })
+})
+

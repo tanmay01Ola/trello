@@ -19,7 +19,7 @@ boardRouter.post("/board/:orgId" ,AuthMiddleware, async (req : Auth ,res)=>{
         message : 'BAD_REQUEST'
     }))
    }
-   if(await hasRole(userId) === "user"){
+   if(await hasRole(userId , orgId) === "user"){
     return(res.status(401).json({
         message :"UNAUTHORIZED"
     }))
@@ -56,7 +56,18 @@ boardRouter.delete("/delete/:boardId" , AuthMiddleware,async(req: Auth ,res)=>{
             message  : "BAD_REQUEST"
         }))
        }
-       if(await hasRole(userId) === "user"){
+       const board = await prisma.boards.findFirst({
+        where : {
+            id : boardId
+        }
+       })
+       const orgId = board?.orgId;
+       if(!(typeof orgId === "string")){
+        return(res.status(400).json({
+            message : "BAD_REQUEST"
+        }))
+       }
+       if(await hasRole(userId ,orgId) === "user"){
             return(res.status(403).json({
                  message : "UNAUTHORIZED"
             }))

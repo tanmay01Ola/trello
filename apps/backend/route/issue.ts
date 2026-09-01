@@ -51,9 +51,15 @@ issueRouter.get("/:orgId/:boardId" ,async (req , res) =>{
     })
 })
 
-issueRouter.patch("/:issueId", AuthMiddleware , async(req  : Auth,res)=>{
+issueRouter.patch("/:issueId/:orgId", AuthMiddleware , async(req  : Auth,res)=>{
     const issueId = req.params.id;
     if(!(typeof issueId === "string")){
+        return(res.status(400).json({
+            message : "BAD_REQUEST"
+        }))
+    }
+    const orgId = req.params.orgId;
+    if(!(typeof orgId === "string")){
         return(res.status(400).json({
             message : "BAD_REQUEST"
         }))
@@ -64,7 +70,7 @@ issueRouter.patch("/:issueId", AuthMiddleware , async(req  : Auth,res)=>{
             message : "BAD_REQUEST"
         }))
     }
-    if(await hasRole(userId) === "user"){
+    if(await hasRole(userId, orgId) === "user"){
         return (res.status(403).json({
             message : "UNAUTHORIZED"
         }))

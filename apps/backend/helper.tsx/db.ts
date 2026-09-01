@@ -43,3 +43,7 @@ export const moveIssue = z.object({
 export const commentBody = z.object({
     comment : z.string()
 })
+
+export const removeBody = z.object({
+    user : z.string()
+})

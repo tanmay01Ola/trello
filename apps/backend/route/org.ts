@@ -45,12 +45,12 @@ orgRouter.delete("/org/:orgId", AuthMiddleware ,async ( req : Auth , res)=>{
         }))
     }
     const orgId = req.params.orgId;
-    if(!orgId){
+    if(!(typeof orgId === "string")){
         return(res.status(400).json({
             message : "BAD_URL"
         }))
     }
-    if(await hasRole(userId) === "user"){
+    if(await hasRole(userId , orgId) === "user"){
         return(res.status(403).json({
             message : "UNZUTHORIZED"
         }))
