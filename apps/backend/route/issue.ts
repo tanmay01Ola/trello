@@ -2,10 +2,11 @@ import { Router } from "express";
 import { AuthMiddleware , type Auth , hasRole } from "../helper.tsx/auth";
 import { prisma } from "db/client";
 import { issueBody, moveIssue } from "../helper.tsx/db";
-const issueRouter = Router();
+export const issueRouter = Router();
 
 
 issueRouter.post("/issue/:boardId" ,AuthMiddleware, async (req : Auth ,res)=>{
+    console.log("issue logged")
     const userId =req.id;
     if(!userId){
         return(res.status(403).json({
@@ -38,9 +39,20 @@ issueRouter.post("/issue/:boardId" ,AuthMiddleware, async (req : Auth ,res)=>{
     id : issue.id
   })
 })
-issueRouter.get("/:orgId/:boardId" ,async (req , res) =>{
+issueRouter.get("/:orgId/:boardId",AuthMiddleware ,async (req : Auth , res) =>{
+    console.log("here")
     const orgId = req.params.orgId;
     const boardId = req.params.boardId;
+    if(!(typeof boardId ==="string")){
+        return res.status(400).json({
+            message : "Bad_request"
+        })
+    }
+    if(!(typeof orgId === "string")){
+        return(res.status(400).json({
+            message :"BAD_REQUEST"
+        }))
+    }
     const issues = await prisma.issue.findMany({
         where : {
             boardId : boardId

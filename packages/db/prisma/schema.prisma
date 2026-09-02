@@ -15,6 +15,7 @@ datasource db {
 model User {
   id     String @id @default(uuid())
   username String @unique
+  profilePic String @default("")
   password String
   email  String @unique
   members Members[]
@@ -33,6 +34,7 @@ model Org {
   members Members[]
   Boards   Boards[]
   invite Invites[]
+  issues Issue[]
 }
 model Members {
   id String @id @default(uuid())
@@ -73,6 +75,8 @@ model Issue {
   board Boards @relation(fields: [boardId] , references: [id])
   issueMapping IssueMapping[]
   comments Comments[]
+  orgId String 
+  org Org @relation(fields: [orgId] , references: [id])
   status Status
 }
 enum Status {

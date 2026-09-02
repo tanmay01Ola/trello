@@ -1,85 +1,89 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import axios from "axios";
 import "./index.css";
-import { Route , Routes , BrowserRouter } from "react-router";
-import { Signup } from "./screens/signup";
+import { useEffect, useState } from "react";
 interface Issues{
   id : string,
   title : string,
   status : "done" | "in_progress" | "upcoming"
 }
-// const boardId = useParams()
-export function App() {
 
-  // const [issues , setIssues] = useState<Issues[]>([])
-  // console.log("issues=" , issues)
-  // const [socket , setSocket] = useState<WebSocket>();
-  // const [status , setStatus] = useState("upcoming");
-  // const [issueTitle , setissueTitle] = useState("")
-  // useEffect(()=>{
-  // const ws = new WebSocket("ws://localhost:3010");
-  // setSocket(ws);
-  // ws.onmessage = (ev)=>{
-  //   const data  = ev.data;
-  //   const parsedData = JSON.parse(data);
-  //   console.log("here=",parsedData)
-  //   if(parsedData.type === "INITIAL_ISSUES"){
-  //     setIssues(parsedData.issues)
-  //   }
-  //   if(parsedData.type === "issue_added"){
-  //      console.log("heehehe" ,  parsedData)
-  //     setIssues(parsedData.issues);
-  //     console.log("dfisdjf" , issues)
-  //   }
-  // }
-  // } , [])
-  return (
-     <div>
-         <BrowserRouter>
-          <Routes>
-               <Route path={"/signup"}  element={<Signup/>}></Route>
-          </Routes>
-  </BrowserRouter>
-     </div>
+export function App(){
+  const [issues , setIssues] = useState<Issues[]>([]);
+  const [socket , setsocket] = useState<WebSocket | null>(null);
+  const [input , setInput] = useState("")
+  useEffect(()=>{ 
+     const ws  = new WebSocket("ws://localhost:4000");
+     setsocket(ws);
+     ws.onmessage = (ev)=>{
+      const parsedData = JSON.parse(ev.data);
+      if(parsedData.type === "Initial_state"){
+        setIssues(parsedData.issues);
+      }
+      if(parsedData.type === "Issue_added"){
+        setIssues(parsedData.issues);
+        console.log("issues =", issues)
+      }
+     }
+  },[])
+
+  return(
+    <div style={{display : "flex"}}>
+         <div style={{flex : 1}}>
+               DONE 
+               {issues.filter((i)=> i.status === "done").map(i=> <div key={i.id}> {i.title}</div>)}
+               <div style={{display : "flex" , flexDirection : "column" ,width : 100}}>
+                               <button onClick={()=>{
+                                socket?.send(JSON.stringify({
+                                  type : "add_issue",
+                                  id : Math.random(),
+                                  title : input,
+                                  status : "done"
+                                }))
+                               }}>Add issue</button>
+             <input type="text" placeholder="add title" onChange={(e)=>{
+                 setInput(e.target.value)
+             }}/>
+               </div>
+
+         </div>
+          <div style={{flex : 1}}>
+            UPCOMING
+            {issues.filter((i)=> i.status === "upcoming").map(i => <div key={i.id}>{i.title}</div>)}
+                                         <div style={{display : "flex" , flexDirection : "column" ,width : 100}}>
+                               <button
+                                     onClick={()=>{
+                                socket?.send(JSON.stringify({
+                                  type : "add_issue",
+                                  id : Math.random(),
+                                  title : input,
+                                  status : "upcoming"
+                                }))
+                              }}>Add issue</button>
+             <input type="text" placeholder="add title" onChange={(e)=>{
+              setInput(e.target.value)
+             }}/>
+               </div>
+          </div>
+           <div style={{flex : 1}}>
+             IN_PROGRESS
+             {issues.filter((i)=> i.status === "in_progress").map(i => <div key={i.id}>{i.title} </div>)}
+                                          <div style={{display : "flex" , flexDirection : "column" ,width : 100}}>
+                                <button
+                                     onClick={()=>{
+                                socket?.send(JSON.stringify({
+                                  type : "add_issue",
+                                  id : Math.random(),
+                                  title : input,
+                                  status : "in_progress"
+                                }))
+                              }}>Add issue</button>
+             <input type="text" placeholder="add title" onChange={(e)=>{
+              setInput(e.target.value)
+             }}/>
+               </div>
+           </div>
+    </div>
   )
-  //   <div>
-  //     <div style={{display : "flex" , justifyContent : "space-between"}}>
-  //       <div>
-  //           DONE
-  //           {issues.filter(i =>i.status === "done").map((issue)=><div>{issue.title}</div> )}
-  //          </div>
-  //          <div>
-  //           IN_PROGRESS
-  //           {issues.filter(i => i.status === "in_progress").map((issue)=> <div key={issue.id}>{issue.title}</div>)}
-  //          </div>
-  //          <div>
-  //              UPCOMING
-  //              {issues.filter(i => i.status === "upcoming").map((issue) => <div key={issue.id}> {issue.title}</div>)}
-  //          </div>
-  //     </div>
-  //     <div style={{display : "flex", padding : "40vh" }}>
-  //          <input type="text" placeholder="add title" onChange={(e)=>{
-  //           setissueTitle(e.target.value)
-  //          }} />
-  //          <select value={status} onChange={(e)=>{
-  //           setStatus(e.target.value)
-  //          }}>
-  //          <option value="done">Done</option>
-  //          <option value="in_progress">In progress</option>
-  //          <option value="upcoming">Upcoming</option>
-  //          </select>
-  //                   <button onClick={(e)=>{
-  //           socket?.send(JSON.stringify({
-  //                   type : "add_issue",
-  //                   boardId : boardId,
-  //                    title : issueTitle,
-  //                    status : status                  
-  //           }))
-  //          }}>Add issue</button>
-  //     </div>
-
-  //   </div>
-  // );
 }
 
 export default App;
