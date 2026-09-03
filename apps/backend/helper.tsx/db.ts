@@ -5,11 +5,9 @@ export const signupBody = z.object({
     email : z.string().email()
 })
 
-export const signinBody= z.object({
+export const signinBody = z.object({
     email : z.string().email(),
-    password : z.string(
-        
-    )
+    password : z.string()
 })
 
 export const OrgBody = z.object({

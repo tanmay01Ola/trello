@@ -1,6 +1,9 @@
 import axios from "axios";
 import "./index.css";
+import {BrowserRouter , Routes , Route} from "react-router-dom"
 import { useEffect, useState } from "react";
+import { Signup } from "./screens/signup";
+import { Signin } from "./screens/signin";
 interface Issues{
   id : string,
   title : string,
@@ -25,63 +28,72 @@ export function App(){
       }
      }
   },[])
-
   return(
-    <div style={{display : "flex"}}>
-         <div style={{flex : 1}}>
-               DONE 
-               {issues.filter((i)=> i.status === "done").map(i=> <div key={i.id}> {i.title}</div>)}
-               <div style={{display : "flex" , flexDirection : "column" ,width : 100}}>
-                               <button onClick={()=>{
-                                socket?.send(JSON.stringify({
-                                  type : "add_issue",
-                                  id : Math.random(),
-                                  title : input,
-                                  status : "done"
-                                }))
-                               }}>Add issue</button>
-             <input type="text" placeholder="add title" onChange={(e)=>{
-                 setInput(e.target.value)
-             }}/>
-               </div>
+    // <div style={{display : "flex"}}>
+    //      <div style={{flex : 1}}>
+    //            DONE 
+    //            {issues.filter((i)=> i.status === "done").map(i=> <div key={i.id}> {i.title}</div>)}
+    //            <div style={{display : "flex" , flexDirection : "column" ,width : 100}}>
+    //                            <button onClick={()=>{
+    //                             socket?.send(JSON.stringify({
+    //                               type : "add_issue",
+    //                               id : Math.random(),
+    //                               title : input,
+    //                               status : "done"
+    //                             }))
+    //                            }}>Add issue</button>
+    //          <input type="text" placeholder="add title" onChange={(e)=>{
+    //              setInput(e.target.value)
+    //          }}/>
+    //            </div>
 
-         </div>
-          <div style={{flex : 1}}>
-            UPCOMING
-            {issues.filter((i)=> i.status === "upcoming").map(i => <div key={i.id}>{i.title}</div>)}
-                                         <div style={{display : "flex" , flexDirection : "column" ,width : 100}}>
-                               <button
-                                     onClick={()=>{
-                                socket?.send(JSON.stringify({
-                                  type : "add_issue",
-                                  id : Math.random(),
-                                  title : input,
-                                  status : "upcoming"
-                                }))
-                              }}>Add issue</button>
-             <input type="text" placeholder="add title" onChange={(e)=>{
-              setInput(e.target.value)
-             }}/>
-               </div>
-          </div>
-           <div style={{flex : 1}}>
-             IN_PROGRESS
-             {issues.filter((i)=> i.status === "in_progress").map(i => <div key={i.id}>{i.title} </div>)}
-                                          <div style={{display : "flex" , flexDirection : "column" ,width : 100}}>
-                                <button
-                                     onClick={()=>{
-                                socket?.send(JSON.stringify({
-                                  type : "add_issue",
-                                  id : Math.random(),
-                                  title : input,
-                                  status : "in_progress"
-                                }))
-                              }}>Add issue</button>
-             <input type="text" placeholder="add title" onChange={(e)=>{
-              setInput(e.target.value)
-             }}/>
-               </div>
-           </div>
+    //      </div>
+    //       <div style={{flex : 1}}>
+    //         UPCOMING
+    //         {issues.filter((i)=> i.status === "upcoming").map(i => <div key={i.id}>{i.title}</div>)}
+    //                                      <div style={{display : "flex" , flexDirection : "column" ,width : 100}}>
+    //                            <button
+    //                                  onClick={()=>{
+    //                             socket?.send(JSON.stringify({
+    //                               type : "add_issue",
+    //                               id : Math.random(),
+    //                               title : input,
+    //                               status : "upcoming"
+    //                             }))
+    //                           }}>Add issue</button>
+    //          <input type="text" placeholder="add title" onChange={(e)=>{
+    //           setInput(e.target.value)
+    //          }}/>
+    //            </div>
+    //       </div>
+    //        <div style={{flex : 1}}>
+    //          IN_PROGRESS
+    //          {issues.filter((i)=> i.status === "in_progress").map(i => <div key={i.id}>{i.title} </div>)}
+    //                                       <div style={{display : "flex" , flexDirection : "column" ,width : 100}}>
+    //                             <button
+    //                                  onClick={()=>{
+    //                             socket?.send(JSON.stringify({
+    //                               type : "add_issue",
+    //                               id : Math.random(),
+    //                               title : input,
+    //                               status : "in_progress"
+    //                             }))
+    //                           }}>Add issue</button>
+    //          <input type="text" placeholder="add title" onChange={(e)=>{
+    //           setInput(e.target.value)
+    //          }}/>
+    //            </div>
+    //        </div>
+           
+    // </div>
+    <div>
+        <BrowserRouter>
+        <Routes>
+          <Route path="/signup" element= {<Signup/>}></Route>
+          <Route path="/signin" element = {<Signin/>}></Route>
+
+            </Routes>
+            </BrowserRouter>
     </div>
   )
 }

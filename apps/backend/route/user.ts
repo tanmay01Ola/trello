@@ -10,8 +10,9 @@ userRouter.post("/signup" , async (req,res)=>{
     try {
     const body = signupBody.safeParse(req.body);
     if(!body.success){
+          console.log("body-",body.error._zod.def[0]?.message)
         return(res.status(400).json({
-            message : body.error.message
+            message : body.error._zod.def[0]?.message
         }))
     }
     const {username , email , password} = req.body;
@@ -44,11 +45,14 @@ userRouter.post("/signup" , async (req,res)=>{
 userRouter.post("/signin" , async (req, res)=>{
     try {
     const body = signinBody.safeParse(req.body);
+    console.log("before parsing");
+    console.log("body" , req.body)
     if(!body.success){
         return(res.status(400).json({
             message : "bad inputs"
         }))
     }
+    console.log("after parsing")
     const {email , password} = body.data;
     const user = await prisma.user.findFirst({
        where : {
@@ -61,6 +65,12 @@ userRouter.post("/signin" , async (req, res)=>{
                 message : "EMAIL_NOT_SIGNED_UP"
             })
         )
+    }
+    const comparePassword = await bcrypt.compare(password , user.password);
+    if(!comparePassword){
+        return(res.status(401).json({
+            message  : "INCORRECT_PASSWORD"
+        }))
     }
     const token = jwt.sign({
         id : user.id
