@@ -9,7 +9,7 @@ interface Issues {
 const wss = new WebSocketServer({port : 4000});
 let Issues  : Issues[]= [{
     id : "fdkfjdg",
-    title : 'djdfg',
+    title : 'dfg',
     status : "done"
 }, {
     id : "dfghf",
@@ -18,6 +18,7 @@ let Issues  : Issues[]= [{
 }]
 let connection :WebSocket[] = []
 wss.on("connection" , (ws)=>{
+    console.log("server connected")
     connection.push(ws)
     ws.send(JSON.stringify({
         type : "Initial_state",

@@ -28,6 +28,8 @@ export function Signin(){
             password
          })
          console.log("respne" , response.data)
+         const token = response.data.token;
+         localStorage.setItem("token" , token)
      }
       catch(err){
        if(axios.isAxiosError(err)){
