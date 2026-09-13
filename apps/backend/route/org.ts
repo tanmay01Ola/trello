@@ -37,7 +37,7 @@ orgRouter.post("/",AuthMiddleware , async (req : Auth , res)=>{
    })
 })
 
-orgRouter.delete("/org/:orgId", AuthMiddleware ,async ( req : Auth , res)=>{
+orgRouter.delete("/:orgId", AuthMiddleware ,async ( req : Auth , res)=>{
     const userId = req.id;
     if(!userId){
         return(res.status(403).json({

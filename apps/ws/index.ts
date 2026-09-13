@@ -1,4 +1,5 @@
 
+import { prisma } from "db/client";
 import type WebSocket from "ws";
 import { WebSocketServer } from "ws";
 interface Issues {
@@ -18,6 +19,13 @@ let Issues  : Issues[]= [{
 }]
 let connection :WebSocket[] = []
 wss.on("connection" , (ws)=>{
+    async function getIssues (){
+        const issues = await prisma.issue.findMany({
+            where : {
+                id : ""
+            }
+        })
+    }
     console.log("server connected")
     connection.push(ws)
     ws.send(JSON.stringify({
@@ -39,5 +47,4 @@ wss.on("connection" , (ws)=>{
             issues : Issues
         })))
     })
-   
 })

@@ -10,9 +10,9 @@ userRouter.post("/signup" , async (req,res)=>{
     try {
     const body = signupBody.safeParse(req.body);
     if(!body.success){
-          console.log("body-",body.error._zod.def[0]?.message)
         return(res.status(400).json({
             message : body.error._zod.def[0]?.message
+
         }))
     }
     const {username , email , password} = req.body;
@@ -24,7 +24,7 @@ userRouter.post("/signup" , async (req,res)=>{
         password : hashdPassword
        }
     })
-    res.json({
+    res.status(200).json({
         message : "User signed up"
     })
 }   catch(err : any){
@@ -32,13 +32,11 @@ userRouter.post("/signup" , async (req,res)=>{
         return(res.status(409).json({
             message : "UNIQUE_CONSTRAINT_VOILATED"
         }))
-
     } 
 
     return(res.status(500).json({
         message : "INTERNAL_SERVER_ERROR"
     }))
-
 }
 })
 
@@ -89,8 +87,8 @@ userRouter.post("/signin" , async (req, res)=>{
 
 
 userRouter.post("/invite/:orgId", AuthMiddleware ,async (req : Auth ,res)=>{
-    const userId = req.id;
-    if(!userId){
+    const adminId = req.id;
+    if(!adminId){
         return(res.status(403).json({
             message : "BAD_REQUEST"
         }))
@@ -101,7 +99,7 @@ userRouter.post("/invite/:orgId", AuthMiddleware ,async (req : Auth ,res)=>{
             message : "BAD_REQUEST"
         }))
      }
-    if(await hasRole(userId , orgId) === "user"){
+    if(await hasRole(adminId , orgId) === "user"){
          return(res.status(409).json({
             message : "UNAUTHORIZED"
          }))
@@ -112,10 +110,10 @@ userRouter.post("/invite/:orgId", AuthMiddleware ,async (req : Auth ,res)=>{
             message : "BAD_INPUTS"
         }))
     }
-    const {inviteId} = parsedBody.data;
+    const {userId} = parsedBody.data;
     const findUser = await prisma.user.findFirst({
         where : {
-            id : inviteId
+            id : userId
         }
     })
     if(!findUser){
@@ -126,7 +124,7 @@ userRouter.post("/invite/:orgId", AuthMiddleware ,async (req : Auth ,res)=>{
     const invite = await prisma.invites.create({
         data : {
             orgId : orgId,
-            userId : inviteId
+            userId : userId
         }
     }) 
 

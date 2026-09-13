@@ -3,10 +3,7 @@ import { AuthMiddleware , type Auth , hasRole } from "../helper.tsx/auth";
 import { prisma } from "db/client";
 import { issueBody, moveIssue } from "../helper.tsx/db";
 export const issueRouter = Router();
-
-
-issueRouter.post("/issue/:boardId" ,AuthMiddleware, async (req : Auth ,res)=>{
-    console.log("issue logged")
+issueRouter.post("/:boardId" ,AuthMiddleware, async (req : Auth ,res)=>{
     const userId =req.id;
     if(!userId){
         return(res.status(403).json({

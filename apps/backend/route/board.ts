@@ -3,17 +3,15 @@ import { type Auth , AuthMiddleware , hasRole } from "../helper.tsx/auth";
 import { prisma } from "db/client";
 import { boardBody } from "../helper.tsx/db";
 import { use } from "react";
-const boardRouter = Router();
-
-
-boardRouter.post("/board/:orgId" ,AuthMiddleware, async (req : Auth ,res)=>{
+export const boardRouter = Router();
+boardRouter.post("/:orgId" ,AuthMiddleware, async (req : Auth ,res)=>{
       const userId = req.id;
       if(!userId){
         return(res.status(403).json({
             message : "BAD_REQUEST"
         }))
       }
-   const orgId = req.params.id;
+   const orgId = req.params.orgId;
    if(!(typeof orgId === "string")){
     return(res.status(400).json({
         message : 'BAD_REQUEST'

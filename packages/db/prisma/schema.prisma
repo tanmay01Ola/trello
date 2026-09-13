@@ -34,7 +34,6 @@ model Org {
   members Members[]
   Boards   Boards[]
   invite Invites[]
-  issues Issue[]
 }
 model Members {
   id String @id @default(uuid())
@@ -53,18 +52,17 @@ model Invites {
   orgId String
   org Org @relation(fields: [orgId] , references: [id])
   accepted Boolean @default(false)
-
-
   @@unique([userId , orgId])
 }
 
 model Boards {
   id String @id @default(uuid())
-  BoardName String @unique
+  BoardName String 
   orgId      String
   org        Org @relation(fields: [orgId] , references: [id])
   issue   Issue[]
   section Section[]
+   @@unique([BoardName , orgId])
 }
 
 model Issue {
@@ -75,8 +73,6 @@ model Issue {
   board Boards @relation(fields: [boardId] , references: [id])
   issueMapping IssueMapping[]
   comments Comments[]
-  orgId String 
-  org Org @relation(fields: [orgId] , references: [id])
   status Status
 }
 enum Status {

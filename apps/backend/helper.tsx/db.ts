@@ -27,7 +27,7 @@ export const issueBody = z.object({
 
 
 export const inviteBody = z.object({
-    inviteId : z.string()
+    userId : z.string()
 })
 
 export const sectionBody = z.object({
