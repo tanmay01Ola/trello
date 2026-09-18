@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { signupBody , signinBody, inviteBody, removeBody } from "../helper.tsx/db";
+import { signupBody , signinBody, inviteBody, removeBody } from "../helper/db";
 import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET;
 export const userRouter = Router();
 import bcrypt from "bcrypt";
 import {prisma} from "db/client";
-import { AuthMiddleware , hasRole, type Auth } from "../helper.tsx/auth";
+import { AuthMiddleware , hasRole, type Auth } from "../helper/auth";
 userRouter.post("/signup" , async (req,res)=>{
     try {
     const body = signupBody.safeParse(req.body);
@@ -25,7 +25,8 @@ userRouter.post("/signup" , async (req,res)=>{
        }
     })
     res.status(200).json({
-        message : "User signed up"
+        message : "User signed up",
+        id : response.id
     })
 }   catch(err : any){
     if(err.code === "P2002"){
@@ -43,14 +44,11 @@ userRouter.post("/signup" , async (req,res)=>{
 userRouter.post("/signin" , async (req, res)=>{
     try {
     const body = signinBody.safeParse(req.body);
-    console.log("before parsing");
-    console.log("body" , req.body)
     if(!body.success){
         return(res.status(400).json({
             message : "bad inputs"
         }))
     }
-    console.log("after parsing")
     const {email , password} = body.data;
     const user = await prisma.user.findFirst({
        where : {
@@ -64,7 +62,10 @@ userRouter.post("/signin" , async (req, res)=>{
             })
         )
     }
+    console.log("PASSOWRD hahahahaha =" , password);
+    console.log("user.PASSWORD" , user.password)
     const comparePassword = await bcrypt.compare(password , user.password);
+    console.log("COMPAREDPASSW0RD ="  , comparePassword)
     if(!comparePassword){
         return(res.status(401).json({
             message  : "INCORRECT_PASSWORD"

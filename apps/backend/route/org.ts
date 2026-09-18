@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { AuthMiddleware , type Auth , hasRole } from "../helper.tsx/auth";
+import { AuthMiddleware , type Auth , hasRole } from "../helper/auth";
 import { prisma } from "db/client";
-import { OrgBody } from "../helper.tsx/db";
+import { OrgBody } from "../helper/db";
 
 export const orgRouter = Router();
 
@@ -12,6 +12,7 @@ orgRouter.post("/",AuthMiddleware , async (req : Auth , res)=>{
             message : "BAD_REQUEST"
         }))
     }
+    console.log("AFTER USERId")
    const parsedBody = OrgBody.safeParse(req.body);
    if(!parsedBody.success){
     return(res.status(400).json({
@@ -30,6 +31,7 @@ orgRouter.post("/",AuthMiddleware , async (req : Auth , res)=>{
         }
     }
    })
+   console.log("AFTER DB CALL")
 
    res.json({
     message : "ORG_CREATED",

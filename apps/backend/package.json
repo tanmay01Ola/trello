@@ -23,5 +23,8 @@
     "jwt": "^0.2.0",
     "router": "^2.2.0",
     "zod": "^4.4.3"
+  },
+  "scripts": {
+    "test": "bun test"
   }
 }

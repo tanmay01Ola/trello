@@ -1,6 +1,6 @@
 import { Router  } from "express";
-import { sectionBody } from "../helper.tsx/db";
-import { AuthMiddleware, type Auth } from "../helper.tsx/auth";
+import { sectionBody } from "../helper/db";
+import { AuthMiddleware, type Auth } from "../helper/auth";
 import { prisma } from "db/client";
 const sectionRouter = Router();
 

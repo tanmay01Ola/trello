@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { AuthMiddleware, type Auth } from "../helper.tsx/auth";
+import { AuthMiddleware, type Auth } from "../helper/auth";
 import { prisma } from "db/client";
-import { commentBody } from "../helper.tsx/db";
+import { commentBody } from "../helper/db";
 const CommentRouter = Router();
 
 

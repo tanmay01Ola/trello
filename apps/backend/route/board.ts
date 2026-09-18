@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { type Auth , AuthMiddleware , hasRole } from "../helper.tsx/auth";
+import { type Auth , AuthMiddleware , hasRole } from "../helper/auth";
 import { prisma } from "db/client";
-import { boardBody } from "../helper.tsx/db";
+import { boardBody } from "../helper/db";
 import { use } from "react";
 export const boardRouter = Router();
 boardRouter.post("/:orgId" ,AuthMiddleware, async (req : Auth ,res)=>{

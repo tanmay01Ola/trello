@@ -1,7 +1,7 @@
 import z from "zod"
 export const signupBody = z.object({
-    username : z.string(),
-    password : z.string(),
+    username : z.string().min(3).max(40),
+    password : z.string().min(6),
     email : z.string().email()
 })
 

@@ -2,6 +2,7 @@ import { prisma } from "db/client";
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET;
+console.log(JWT_SECRET)
 interface payload {
     id : string
 }
@@ -29,7 +30,7 @@ export function AuthMiddleware(req : Auth , res : Response , next : NextFunction
             message : "TOKEN_MISSING"
         }))
     }
-    const payload = jwt.verify(token ,( JWT_SECRET!)) as payload;
+    const payload = jwt.verify(token ,JWT_SECRET!) as payload;
     const userId = payload.id;
     req.id = userId;
     next()
