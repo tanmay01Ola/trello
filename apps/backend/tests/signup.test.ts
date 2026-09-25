@@ -21,7 +21,7 @@ test("CHECK SIGNUP ENDPOINT", async()=>{
         body = await response.json() as Body;
      expect(body.message).toBe("User signed up");
      expect(response.status).toBe(200);
-     })
+     }) 
 
  test("UNIQUE_EMAIL_CONSTRAINT" , async()=>{
     const response = await fetch(`http://localhost:${PORT}/user/signup` ,{

@@ -1,30 +1,16 @@
-import {afterAll, afterEach, beforeAll, expect, test} from "bun:test";
+import {expect, test} from "bun:test";
 import { PORT } from "./setup";
-import { prisma } from "db/client";
-import bcrypt from "bcrypt";
-import type { Body } from "./setup";
-import { email } from "zod";
-let id : string | undefined;
-   const password = "tadjdggdf",
-   hashedPassword =await  bcrypt.hash(password , 10);
-beforeAll(async()=>{
-    const addUser = await prisma.user.create({
-        data : {
-            username : "gfdskjl",
-            email : "dsdfghj@gmail.com",
-            password : hashedPassword
-        }
-    })
-    id = addUser.id;    
-})
+import { password, type Body } from "./setup";
+
 test("CHECK_SIGNIN" , async()=>{
+    console.log("PASSOWRD" , password)
    const response = await fetch(`http://localhost:${PORT}/user/signin` , {
     method : "POST",
     headers : {
         "Content-Type" : "application/json"
     },
     body : JSON.stringify({
-        email : "dsdfghj@gmail.com",
+        email : "cvbv@gmail.com",
         password : password
     })
    })
@@ -72,7 +58,7 @@ test("EMAIL FIELD EMPTY" , async()=>{
             "Content-Type" : "application/json"
         },
         body : JSON.stringify({
-            email : "taerafg@gmail.com",
+            email : "cvbv@gmail.com",
         })
 
     })
@@ -89,8 +75,8 @@ test("EMAIL FIELD EMPTY" , async()=>{
             "Content-Type" : "application/json"
         } ,
         body : JSON.stringify({
-            email : "tanmay@gmail.com",
-            password : "tanmay"
+            email : "tanmdfhsgjay@gmail.com",
+            password : password
         })
      })
      const body = await response.json() as Body;
@@ -105,7 +91,7 @@ test("EMAIL FIELD EMPTY" , async()=>{
             'Content-Type' : "application/json"
         },
         body : JSON.stringify({
-                   email : "dsdfghj@gmail.com",
+                   email : "cvbv@gmail.com",
             password : "sdfljksadfj"
         })
     })
@@ -114,14 +100,5 @@ test("EMAIL FIELD EMPTY" , async()=>{
     expect(body.message).toBe("INCORRECT_PASSWORD");
     expect(response.status).toBe(401)
   })
-afterAll(async()=>{
-    if(!(id === undefined)){
-        await prisma.user.delete({
-            where : {
-                id : id
-            }
-        })
-    }
-    id = undefined
-})
+
 

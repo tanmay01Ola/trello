@@ -19,7 +19,9 @@ orgRouter.post("/",AuthMiddleware , async (req : Auth , res)=>{
         message : "BAD_INPUTS"
     }))
    }
+   console.log("AFTER PARSED BODY ")
    const {name} = parsedBody.data;
+   console.log("BEFORE DB CALL")
    const org = await prisma.org.create({
     data : {
         name : name,
@@ -31,8 +33,6 @@ orgRouter.post("/",AuthMiddleware , async (req : Auth , res)=>{
         }
     }
    })
-   console.log("AFTER DB CALL")
-
    res.json({
     message : "ORG_CREATED",
     id : org.id
