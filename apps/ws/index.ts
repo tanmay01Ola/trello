@@ -1,4 +1,4 @@
-
+console.log("WS RAN")
 import { prisma } from "db/client";
 import type WebSocket from "ws";
 import { WebSocketServer } from "ws";
@@ -17,15 +17,23 @@ let Issues  : Issues[]= [{
     title : "dfjig",
     status : "upcoming"
 }]
+// async function getIssues(){
+//    const issues = await prisma.issue.findMany({
+   
+//    })
+// }
+
 let connection :WebSocket[] = []
-wss.on("connection" , (ws)=>{
-    async function getIssues (){
-        const issues = await prisma.issue.findMany({
-            where : {
-                id : ""
-            }
-        })
-    }
+wss.on("connection" , (ws , req)=>{
+    console.log("URL =" , req.url)
+    const url = new URL(req.url!, "http://localhost:4000");
+console.log("URL 2" , url)
+     const parts = url.pathname.split("/");
+     const boardId = parts[2]
+     console.log("boardId -" , boardId)
+
+
+//    getIssues()
     console.log("server connected")
     connection.push(ws)
     ws.send(JSON.stringify({

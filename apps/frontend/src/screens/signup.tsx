@@ -1,7 +1,9 @@
 import axios from "axios"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom";
 
 export function Signup(){
+    const navigate = useNavigate()
     const [email , setEmail] = useState("");
     const [password , setPassword] = useState("");
     const [username , setUsername] = useState("");
@@ -33,6 +35,7 @@ export function Signup(){
                 password , 
                 username
             })
+            navigate("/signin")
     } catch(err){
         if(axios.isAxiosError(err)){
             console.log(err.response?.status);

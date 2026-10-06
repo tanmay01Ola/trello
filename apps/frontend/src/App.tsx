@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Signup } from "./screens/signup";
 import { Signin } from "./screens/signin";
 import { Issues } from "./screens/issues";
+import { OrgPage } from "./screens/org";
 interface Issues{
   id : string,
   title : string,
@@ -18,7 +19,9 @@ export function App(){
         <Routes>
           <Route path="/signup" element= {<Signup/>}></Route>
           <Route path="/signin" element = {<Signin/>}></Route>
-          <Route path="/issues" element = {<Issues/>}></Route>
+          <Route path="/issues/:boardId" element = {<Issues/>}></Route>
+          {/* <Route path="/boards" element = {<Boards></Boards>}></Route> */}
+          <Route path="/org" element = {<OrgPage></OrgPage>}></Route>
             </Routes>
             </BrowserRouter>
     </div>

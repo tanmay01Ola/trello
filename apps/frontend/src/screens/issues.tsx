@@ -1,19 +1,23 @@
-import axios from "axios";
-import { password } from "bun";
+
 import { useEffect, useState } from "react"
+import { useParams } from "react-router-dom";
 interface issue {
     id : string,
     title : string,
     status : "done" | "in_progress" | "upcoming"
 }
+
 export function Issues(){
+      const  {boardId} = useParams() ;
+     
+      console.log("BOARDID =" ,  boardId)
  const [issues , setissues] = useState<issue[]>([]);
  const [socket , setSocket] = useState<WebSocket |null>(null)
  const [doneValue , setDoneValue] = useState("");
  const [progress , setProgress] = useState("");
  const [upcoming , setupcoming] = useState("")
  useEffect(()=>{
-     const ws = new WebSocket("ws://localhost:4000");
+     const ws = new WebSocket(`ws://localhost:4000/board/:${boardId}`);
      setSocket(ws);
       ws.onmessage = (message)=>{
         const parsedData = JSON.parse(message.data.toString());

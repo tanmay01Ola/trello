@@ -33,7 +33,6 @@ export function AuthMiddleware(req : Auth , res : Response , next : NextFunction
     const payload = jwt.verify(token , (JWT_SECRET)!) as payload
     const userId = payload.id;
     req.id = userId;
-    console.log("AUTHMIDDLEWARE RAN COMPLETELY")
     next()
 }
 

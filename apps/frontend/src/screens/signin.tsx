@@ -1,7 +1,9 @@
 import axios from "axios"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom";
 
 export function Signin(){
+    const navigate = useNavigate()
     const [email , setemail] = useState("");
     const [password , setPassword] = useState("");
     const [error , setError] = useState("");
@@ -27,7 +29,7 @@ export function Signin(){
             email,
             password
          })
-         console.log("respne" , response.data)
+        console.log("respne" , response.data)
          const token = response.data.token;
          localStorage.setItem("token" , token)
      }
@@ -39,6 +41,7 @@ export function Signin(){
          }
      } finally{
         setLoading(false)
+       navigate("/org")
      }
     }
 

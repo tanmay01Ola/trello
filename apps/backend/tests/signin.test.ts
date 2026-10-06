@@ -1,16 +1,27 @@
-import {expect, test} from "bun:test";
+import {afterEach, beforeAll, expect, test} from "bun:test";
 import { PORT } from "./setup";
-import { password, type Body } from "./setup";
-
+import { CreateUser, email   } from "./helper/createUser";
+import { password } from "./helper/createUser";
+import type { Body } from "./setup";
+import { DeleteUser } from "./helper/deleteUser";
+export interface TestUser {
+    id : string,
+    username : string,
+    password : string, 
+    email : string
+}
+let testUser : TestUser
+beforeAll(async ()=>{
+   testUser =await CreateUser()
+})
 test("CHECK_SIGNIN" , async()=>{
-    console.log("PASSOWRD" , password)
    const response = await fetch(`http://localhost:${PORT}/user/signin` , {
     method : "POST",
     headers : {
         "Content-Type" : "application/json"
     },
     body : JSON.stringify({
-        email : "cvbv@gmail.com",
+        email : testUser.email,
         password : password
     })
    })
@@ -41,24 +52,22 @@ test("EMAIL FIELD EMPTY" , async()=>{
             "Content-Type" : "application/json"
         } ,
         body : JSON.stringify({
-            password : "gdfjklfgjdf"
+            password : password
         })
     })
     const body = await response.json() as Body;
     expect(body.message).toBe("bad inputs");
     expect(response.status).toBe(400);
   })
-
-
-
-  test("PASSWORD MISSING" ,async()=>{
+ 
+ test("PASSWORD MISSING" ,async()=>{
     const response = await fetch(`http://localhost:${PORT}/user/signin` , {
         method : "POST",
         headers : {
             "Content-Type" : "application/json"
         },
         body : JSON.stringify({
-            email : "cvbv@gmail.com",
+            email :email,
         })
 
     })
@@ -91,7 +100,7 @@ test("EMAIL FIELD EMPTY" , async()=>{
             'Content-Type' : "application/json"
         },
         body : JSON.stringify({
-                   email : "cvbv@gmail.com",
+                   email : email,
             password : "sdfljksadfj"
         })
     })
@@ -100,5 +109,6 @@ test("EMAIL FIELD EMPTY" , async()=>{
     expect(body.message).toBe("INCORRECT_PASSWORD");
     expect(response.status).toBe(401)
   })
-
-
+afterEach(()=>{
+    DeleteUser()
+})

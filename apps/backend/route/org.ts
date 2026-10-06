@@ -76,13 +76,20 @@ orgRouter.get("/",AuthMiddleware, async ( req : Auth ,res)=>{
             message : "BAD_REQUEST"
         }))
        }
-       const orgs = await prisma.members.findMany({
+       const members = await prisma.members.findMany({
         where : {
            userId : userId 
+        } ,
+       include : {
+        org : {
+      
         }
+       }
        })
+       console.log("ORGS =" , members)
+       console.log("BEFORE RESPONSE")
        res.json({
-        org : orgs
+        members : members
        })
 })
 

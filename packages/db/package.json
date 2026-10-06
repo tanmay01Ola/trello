@@ -7,14 +7,21 @@
   },
   "private": true,
   "devDependencies": {
-    "@types/bun": "latest"
+    "@prisma/cli-engine": "0.6.2",
+    "@types/bun": "latest",
+    "@types/node": "^26.6.3",
+    "prisma": "7"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.1",
-    "@prisma/client": "^7.9.1",
-    "dotenv": "^17.4.2"
+    "@prisma/client": "7",
+    "@prisma/orm-postgres": "^8.0.0-rc.13",
+    "dotenv": "^18.0.4"
+  },
+  "scripts": {
+    "contract:emit": "prisma contract emit"
   }
 }

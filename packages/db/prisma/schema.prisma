@@ -9,7 +9,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "postgresql" 
 }
 
 model User {
@@ -32,7 +32,6 @@ model Org {
   id String @id @default(uuid())
   name String @unique
   members Members[]
-  Boards   Boards[]
   invite Invites[]
 }
 model Members {
@@ -58,8 +57,7 @@ model Invites {
 model Boards {
   id String @id @default(uuid())
   BoardName String 
-  orgId      String
-  org        Org @relation(fields: [orgId] , references: [id])
+    orgId      String
   issue   Issue[]
   section Section[]
    @@unique([BoardName , orgId])

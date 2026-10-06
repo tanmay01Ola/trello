@@ -1,11 +1,10 @@
 
-import { expect, test} from "bun:test";
-import { afterEach } from "bun:test";
-import { prisma } from "db/client";
+import { afterAll, afterEach, expect, test} from "bun:test";
 import type { Body } from "./setup";
-let id : string | undefined
 let body : Body
 import { PORT } from "./setup";
+import { prisma } from "db/client";
+let id : string |undefined;
 test("CHECK SIGNUP ENDPOINT", async()=>{
      const response = await fetch(`http://localhost:${PORT}/user/signup` , {
         method : "POST",
@@ -13,14 +12,15 @@ test("CHECK SIGNUP ENDPOINT", async()=>{
                    "Content-Type": "application/json"
         },
         body : JSON.stringify({
-            username : "fccvxjdi",
-            email : "0vcbcxvchj@gmail.com",
+            username : "tanniddd",
+            email : "tanniddd@gmail.com",
             password : 'dfhjdghjfd'
         })
      })
         body = await response.json() as Body;
      expect(body.message).toBe("User signed up");
      expect(response.status).toBe(200);
+    id = body.id;
      }) 
 
  test("UNIQUE_EMAIL_CONSTRAINT" , async()=>{
@@ -30,8 +30,8 @@ test("CHECK SIGNUP ENDPOINT", async()=>{
             "Content-Type"  : "application/json"
         },
         body : JSON.stringify({
-                     username : "fghjdi",
-            email : "0vcbhj@gmail.com",
+         username : "tanniddd",
+            email : "tanniddd@gmail.com",
             password : 'dfhjdghjfd'
         })
     })
@@ -40,6 +40,33 @@ test("CHECK SIGNUP ENDPOINT", async()=>{
     expect(response.status).toBe(409) 
 
  })
+
+ test("EMAIL_NOT_SIGNEDUP"  , async()=>{
+        const response = await fetch(`http://localhost:${PORT}/user/signup`,{
+            method : "POST",
+            headers  : {
+                "Content-Type" : "application/json"
+            } ,
+            body : JSON.stringify({
+                           username : "tanniddd",
+            email : "dd@gmail.com",
+            password : 'dfhjdghjfd'
+            })
+        })
+ })
+ test("USERNAME_NOT_SIGNED_UP" , async()=>{
+    const response = await fetch(`http://localhost:${PORT}/user/signup` , {
+        method : "POST",
+        headers : {
+            "Content-Type" : "application/json"
+        },
+        body : JSON.stringify({
+            username : "tanniddd",
+            email : "tanniddd@gmail.com",
+            password : 'dfhjdghjfd'
+        })
+    })
+ })
      test("INVALID_EMAIL_FORMAT" ,async()=>{
         const response = await fetch(`http://localhost:${PORT}/user/signup`, {
             method : "POST",
@@ -47,9 +74,9 @@ test("CHECK SIGNUP ENDPOINT", async()=>{
                 "Content-Type" : "application/json"
             },
             body : JSON.stringify({
-                username : "tanmdghdfjay",
-                email : "taayl",
-                password : "tanmay123"
+                       username : "tanniddd",
+            email : "tannidd",
+            password : 'dfhjdghjfd'
             })
         })
          body = await response.json() as Body;
@@ -66,9 +93,9 @@ test("CHECK SIGNUP ENDPOINT", async()=>{
                 "Content-Type" : "application/json"
              },
              body : JSON.stringify({
-                username : "",
-                email : "tanmay01.ola@gmail.com",
-                 password : "tanmay"
+                     username : "d",
+            email : "tanniddd@gmail.com",
+            password : 'dfhjdghjfd'
              })
         })
          body = await response.json() as Body;
@@ -84,9 +111,9 @@ test("CHECK SIGNUP ENDPOINT", async()=>{
                 "Content-Type" : "application/json"
                         },
            body : JSON.stringify({
-             username : "dkjgdffdg",
-             password : "fdd",
-             email : "dgjkdf@gmail.com"
+                            username : "tanniddd",
+            email : "tanniddd@gmail.com",
+            password : 'd'
            })
           })
            body = await response.json() as Body;
@@ -102,8 +129,8 @@ test("CHECK SIGNUP ENDPOINT", async()=>{
                 "Content-Type" : "application/json"
             },
             body : JSON.stringify({
-                email : "tanmay01@gmail.com",
-                password : "Tanmay234"
+            email : "tanniddd@gmail.com",
+            password : 'dfhjdghjfd'
             })
         })
          body = await response.json() as Body;
@@ -118,9 +145,9 @@ test("CHECK SIGNUP ENDPOINT", async()=>{
                 "Content-Type" : "application/json"
             },
             body : JSON.stringify({
-                username : "tanmay",
-                email : "",
-                password : "tanmaysf"
+                            username : "tanniddd",
+            email : "",
+            password : 'dfhjdghjfd'
             })
         })
         body = await response.json() as Body;
@@ -134,8 +161,8 @@ test("CHECK SIGNUP ENDPOINT", async()=>{
            "Content-Type" : "application/json"   
         },
         body : JSON.stringify({
-            username : "tanmy",
-            password : "tanmat123"
+                           username : "tanniddd",
+            password : 'dfhjdghjfd'
         })
     })
       body =await response.json() as Body;
@@ -150,8 +177,8 @@ test("CHECK SIGNUP ENDPOINT", async()=>{
             "Content-Type" : "application/json"
         },
         body : JSON.stringify({
-            username : "Tanmy",
-            email : "Tanmat12345@gmail.com"
+                         username : "tanniddd",
+            email : "tanniddd@gmail.com",
         })
     })
     body = await response.json() as Body;
@@ -159,16 +186,15 @@ test("CHECK SIGNUP ENDPOINT", async()=>{
     expect(response.status).toBe(400);
    })
 
-   afterEach(async()=>{
-      console.log("ID-" , id)
-      id = body.id
-       if(!(id === undefined)){
-          await prisma.user.delete({
-            where : {
+  afterAll(async()=>{
+    if(!(id === undefined)){
+            await prisma.user.delete({
+        where : {
                 id : id
-            }
-          })
-       }
-   })
+        }
+    })
+    console.log("AFTER USER DELETION")
+    }
+  })
 
 

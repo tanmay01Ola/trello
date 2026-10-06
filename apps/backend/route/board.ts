@@ -32,7 +32,7 @@ boardRouter.post("/:orgId" ,AuthMiddleware, async (req : Auth ,res)=>{
    const board = await prisma.boards.create({
     data : {
         BoardName : name,
-        orgId : orgId,
+        orgId : orgId
     }
    })
    res.json({
