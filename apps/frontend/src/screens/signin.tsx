@@ -44,8 +44,6 @@ export function Signin(){
        navigate("/org")
      }
     }
-
-
     return(
         <div>
              <input type="text" placeholder="email" onChange={(e)=>{

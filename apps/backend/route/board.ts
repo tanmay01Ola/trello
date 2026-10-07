@@ -87,12 +87,14 @@ boardRouter.get("/:orgId" ,AuthMiddleware,async (req  : Auth,res)=>{
             message : "BAD_REQUEST"
         }))
       }
-      const orgId = req.params.id;
+      const orgId = req.params.orgId;
       if(!(typeof orgId === "string")){
+        console.log("TYPEOF ORGID")
            return(res.status(400).json({
             message : "BAD_REQUEST"
            }))
       }
+      console.log("ORGID ===" , orgId)
       const getBoards = await prisma.boards.findMany({
         where : {
             orgId : orgId
