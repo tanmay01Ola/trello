@@ -14,21 +14,15 @@ export function Issues(){
       const  {boardId , orgId} = useParams() ;
     const [issues  , setIssues] = useState<Issue[]>([])
    useEffect(()=>{
-    async function HandleIssues(){
-         await axios.get(`http://localhost:3006/issues/${orgId}/${boardId}` ,{
-            headers : {
-                "Authorization" : `Bearer ${token}`
-            }
-         })
-         .then((response)=>{
-            console.log("RESPONSE2=" , response.data.issues)
-
-            setIssues(response.data.issues)
-         })
-    }
-    HandleIssues()
+    const ws = new WebSocket(`ws://localhost:4000/issues/${boardId}`)
+     ws.onmessage = (ev)=>{
+       const data =  JSON.parse(ev.data);
+        if(data.type === "INITIAL_STATE"){
+           setIssues(data.issues)
+        }
+     }
    }, [])
-   console.log("ISSUES =" , issues)
+   
    return(
      <div style={{display : "flex"}}>
         <div style={{flex : 1}}>

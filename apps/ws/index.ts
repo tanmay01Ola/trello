@@ -2,57 +2,29 @@ console.log("WS RAN")
 import { prisma } from "db/client";
 import type WebSocket from "ws";
 import { WebSocketServer } from "ws";
-interface Issues {
-    id : string,
-    title : string,
-    status : "done"| "in_progress"|"upcoming"
-}
+
 const wss = new WebSocketServer({port : 4000});
-let Issues  : Issues[]= [{
-    id : "fdkfjdg",
-    title : 'dfg',
-    status : "done"
-}, {
-    id : "dfghf",
-    title : "dfjig",
-    status : "upcoming"
-}]
-// async function getIssues(){
-//    const issues = await prisma.issue.findMany({
-   
-//    })
-// }
+wss.on("connection" , async(ws  , req)=>{
+ if(req.url === undefined){
+    return(
+        ws.send(JSON.stringify({
+            type : "REQ.URL_IS_UNDEFINED",
+            message : "SOMETHING_WENT_WRONG"
+        }))
+    )
+ }
+    const url = new URL(req.url , "http://localhost:4000");
+    const boardId =  url.pathname.split("/")[2];
 
-let connection :WebSocket[] = []
-wss.on("connection" , (ws , req)=>{
-    console.log("URL =" , req.url)
-    const url = new URL(req.url!, "http://localhost:4000");
-console.log("URL 2" , url)
-     const parts = url.pathname.split("/");
-     const boardId = parts[2]
-     console.log("boardId -" , boardId)
-
-
-//    getIssues()
-    console.log("server connected")
-    connection.push(ws)
-    ws.send(JSON.stringify({
-        type : "Initial_state",
-        issues : Issues
-    }))
-    ws.on("message" , (message)=>{
-        const data = JSON.parse(message.toString());
-        if(data.type === "add_issue"){
-            Issues.push({
-                id : data.id,
-                title : data.title,
-                status : data.status
-            })
+  const issues =   await prisma.issue.findMany({
+        where : {
+            boardId : boardId
         }
-        console.log("issue", Issues)
-        connection.forEach((con)=> con.send(JSON.stringify({
-            type : "Issue_added",
-            issues : Issues
-        })))
     })
+    ws.send(JSON.stringify({
+        type : "INITIAL_STATE",
+              issues : issues
+    }))
+
 })
+
